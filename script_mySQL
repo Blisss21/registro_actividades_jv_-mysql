@@ -1,0 +1,41 @@
+drop table actividad; 
+drop table bitacora; 
+drop table gatillo_actualizar; 
+drop view view_actividades;
+drop trigger trigger_actualizar;
+
+-- ejemplo de insercion de datos para la tabla actividad
+-- insert into actividad (nombre_actividad,minutos_realizados) values('ejercicio3',5000),('programar2',903);
+
+CREATE TABLE actividad (
+  nombre_actividad varchar(45) NOT NULL,
+  minutos_realizados int(10) unsigned NOT NULL,
+  PRIMARY KEY (nombre_actividad)
+);
+
+CREATE TABLE bitacora (
+  id_registro int(10) unsigned NOT NULL AUTO_INCREMENT,
+  fecha_registro date NOT NULL,
+  nombre_actividad varchar(45) NOT NULL,
+  minutos_realizados int(10) unsigned NOT NULL,
+  PRIMARY KEY (id_registro)
+);
+
+-- trigger
+DELIMITER \\
+CREATE TRIGGER trigger_actualizar AFTER update ON actividad
+FOR EACH ROW 
+BEGIN
+	insert into bitacora(fecha_registro,nombre_actividad,minutos_realizados) 
+    values(CAST(fecha AS DATE),new.nombre_actividad,new.minutos_realizados);
+END \\
+DELIMITER ;
+
+CREATE VIEW view_actividades AS (select 
+nombre_actividad, 
+truncate(((minutos_realizados/60)/24),0)as dias,
+truncate((minutos_realizados/60),0)  as horas,
+minutos_realizados
+from actividad)
+order by minutos_realizados desc
+;
