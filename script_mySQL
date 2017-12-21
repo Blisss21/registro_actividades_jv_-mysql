@@ -27,7 +27,7 @@ CREATE TRIGGER trigger_actualizar AFTER update ON actividad
 FOR EACH ROW 
 BEGIN
 	insert into bitacora(fecha_registro,nombre_actividad,minutos_realizados) 
-    values(CAST(fecha AS DATE),new.nombre_actividad,new.minutos_realizados);
+    values(CAST(sysdate() AS DATE),new.nombre_actividad,new.minutos_realizados);
 END \\
 DELIMITER ;
 
